@@ -1,0 +1,196 @@
+  // const handleLogin = async () => {
+  //   try {
+  //     console.log("Submitted email:", formData.email); // Debugging log
+  //     console.log("Submitted password:", formData.password); // Debugging log
+  //     const response = await axios.post(`${BASE_URL}/auth/login`, formData);
+  //     const token = response.data.token;
+  //     await storeToken(token);
+
+  //     // Navigate to the main app screen
+  //     navigation.replace("Home");
+  //   } catch (error) {
+  //     setErrorMessage("Invalid credentials.");
+  //   }
+  // };
+  // const handleLogin = async () => {
+  //   try {
+  //     console.log("Submitted email:", formData.email);
+  //     console.log("Submitted password:", formData.password);
+
+  //     const response = await axios.post(
+  //       `${BASE_URL}/authentication/login`,
+  //       formData
+  //     );
+
+  //     console.log("Server response:", response.data); // Check the exact response
+
+  //     const token = response.data.token;
+  //     if (token) {
+  //       await storeToken(token); // Store token in AsyncStorage
+  //       navigation.replace("Drawer"); // Navigate to main screen+
+  //     } else {
+  //       setErrorMessage("Login failed. No token returned.");
+  //     }
+  //   } catch (error) {
+  //     console.log(
+  //       "Login error:",
+  //       error.response ? error.response.data : error.message
+  //     );
+  //     // setErrorMessage(
+  //     //   error.response
+  //     //     ? error.response.data.message
+  //     //     : "Login error. Please try again."
+  //     // );
+  //   }
+  // };
+
+  // const handleLogin = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       `${BASE_URL}/authentication/login`,
+  //       formData
+  //     );
+  //     const { accessToken, refreshToken } = response.data; // Destructure tokens from response
+  //     if (accessToken && refreshToken) {
+  //       await storeToken(accessToken); // Optionally, store refreshToken if needed
+  //       navigation.replace("Drawer");
+  //     } else {
+  //       setErrorMessage("Login failed. No token returned.");
+  //     }
+  //   } catch (error) {
+  //     setErrorMessage(
+  //       error.response?.data?.message || "Login error. Please try again."
+  //     );
+  //     console.error("Login error:", error.response || error.message);
+  //   }
+  // };
+
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+
+  import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { BASE_URL } from "../../utils/config";
+
+export const authApi = createApi({
+  reducerPath: "authApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: BASE_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = getState()?.authLogout?.token; // Access token from the state
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: "authentication/login",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    logout: builder.mutation({
+      query: () => ({
+        url: "authentication/logout",
+        method: "POST",
+      }),
+    }),
+  }),
+});
+
+export const { useLoginMutation, useLogoutMutation } = authApi;
+
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//------ Usage in React Components login, logout api rtkquery------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+import { useLogoutMutation } from "../services/authApi";
+
+const Logout = () => {
+  const [logout] = useLogoutMutation();
+
+  const handleLogout = async () => {
+    try {
+      await logout().unwrap();
+      console.log("Logout successful");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
+  return <Button title="Logout" onPress={handleLogout} />;
+};
+import { useLoginMutation } from "../services/authApi";
+
+const Login = () => {
+  const [login] = useLoginMutation();
+
+  const handleLogin = async (credentials) => {
+    try {
+      await login(credentials).unwrap();
+      console.log("Login successful");
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+  };
+
+  return <Button title="Login" onPress={() => handleLogin({ email, password })} />;
+};
+
+---------------------------------------------------------------------------------------------------- 
+      for handling explicity in outer func without implement in authapi (rtkquer starter)
+---------------------------------------------------------------------------------------------------- 
+// Login Component
+import { useLoginMutation, useLogoutMutation } from "../services/authApi";
+import { TokenService } from "../utils/tokenService";
+
+const Login = () => {
+  const [login] = useLoginMutation();
+
+  const handleLogin = async (credentials) => {
+    try {
+      const { accessToken, refreshToken } = await login(credentials).unwrap();
+      await TokenService.storeTokens(accessToken, refreshToken);
+      console.log("Login successful");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  return <Button title="Login" onPress={() => handleLogin({ email, password })} />;
+};
+
+// Logout Component
+const Logout = () => {
+  const [logout] = useLogoutMutation();
+
+  const handleLogout = async () => {
+    try {
+      await logout().unwrap();
+      await TokenService.clearTokens();
+      console.log("Logout successful");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  return <Button title="Logout" onPress={handleLogout} />;
+};

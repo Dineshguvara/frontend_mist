@@ -1,0 +1,68 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import jwtDecode from "jwt-decode";
+
+// Store JWT Token
+export const storeToken = async (accessToken, refreshToken) => {
+  try {
+    await AsyncStorage.setItem("accessToken", accessToken);
+    await AsyncStorage.setItem("refreshToken", refreshToken);
+    console.log("Tokens stored successfully");
+  } catch (e) {
+    console.error("Failed to store tokens", e);
+  }
+};
+
+// Get JWT Token
+export const getToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem("accessToken");
+    console.log("Retrieved token:", token);
+    return token;
+  } catch (e) {
+    console.error("Failed to retrieve token", e);
+  }
+};
+
+// Store Refresh Token
+export const storeRefreshToken = async (refreshToken) => {
+  try {
+    await AsyncStorage.setItem("refreshToken", refreshToken);
+  } catch (error) {
+    console.error("Error storing the refresh token", error);
+  }
+};
+
+// Get Refresh Token
+export const getRefreshToken = async () => {
+  try {
+    const refreshToken = await AsyncStorage.getItem("refreshToken");
+    return refreshToken;
+  } catch (error) {
+    console.error("Error retrieving the refresh token", error);
+    return null;
+  }
+};
+
+export const verifyToken = async () => {
+  try {
+    const token = await getToken(); // Ensure consistency with your `getToken` method
+
+    if (!token) {
+      console.error("Token is missing or undefined");
+      return false;
+    }
+
+    const decoded = jwtDecode(token); // Decode the token
+    const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+
+    if (decoded.exp && decoded.exp > currentTime) {
+      return true; // Token is valid
+    } else {
+      console.error("Token has expired");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error verifying token", error);
+    return false;
+  }
+};
