@@ -194,3 +194,57 @@ const Logout = () => {
 
   return <Button title="Logout" onPress={handleLogout} />;
 };
+
+
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//------  INITIAL AUTH     ------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+import { TokenService } from "../../../utils/token";
+import { setAuthenticated, logout } from "../../reducers/authReducer";
+import { handleTokenRefresh } from "./accessExpired";
+
+export const initializeAuth = async (store, userId) => {
+  try {
+    // Check if the access token is valid
+    const isValid = await TokenService.isAccessTokenValid(userId);
+
+    if (isValid) {
+      store.dispatch(setAuthenticated(true)); // User is authenticated
+    } else {
+      console.warn("Access token expired. Attempting to refresh...");
+
+      // Attempt to refresh the token
+      const refreshResult = await handleTokenRefresh(
+        null, // No specific request to retry
+        { getState: store.getState, dispatch: store.dispatch }, // Redux state and dispatch
+        {}, // Extra options (if any)
+        async (args) => {
+          console.error("Base query not needed for initialization.");
+          return { error: { status: 401 } }; // Return an error if refresh fails
+        }
+      );
+
+      if (refreshResult?.data) {
+        console.log("Token refresh successful.");
+        store.dispatch(setAuthenticated(true)); // Mark user as authenticated
+      } else {
+        console.error("Token refresh failed. Logging out.");
+        await TokenService.clearTokens(userId);
+        store.dispatch(logout());
+      }
+    }
+  } catch (error) {
+    console.error("Error during auth initialization:", error.message || error);
+    await TokenService.clearTokens(userId);
+    store.dispatch(logout());
+  }
+};
+

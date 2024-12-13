@@ -1,19 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { BASE_URL } from "../../utils/config";
-import { TokenService } from "../../utils/token";
-
+import enhancedBaseQuery from "./helper/enhanceBaseQuery";
 export const rolesApi = createApi({
   reducerPath: "rolesApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL, // Replace with your backend base URL
-    prepareHeaders: async (headers) => {
-      const token = await TokenService.getAccessToken();
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: enhancedBaseQuery,
   endpoints: (builder) => ({
     // Create a role
     createRole: builder.mutation({
@@ -27,9 +16,15 @@ export const rolesApi = createApi({
     getAllRoles: builder.query({
       query: () => "/roles",
     }),
+
     // Get a single role by ID
     getRoleById: builder.query({
       query: (id) => `/roles/${id}`,
+    }),
+
+    // Get a single role by ID
+    showRoleById: builder.query({
+      query: (id) => `/roles/role-register/${id}`,
     }),
     // Update a role
     updateRole: builder.mutation({
@@ -53,6 +48,7 @@ export const {
   useCreateRoleMutation,
   useGetAllRolesQuery,
   useGetRoleByIdQuery,
+  useShowRoleByIdQuery,
   useUpdateRoleMutation,
   useDeleteRoleMutation,
 } = rolesApi;

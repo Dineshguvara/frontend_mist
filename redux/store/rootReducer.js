@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import authSlice from "../reducers/authReducer";
+ import authSlice from "../reducers/authReducer"
 import { authApi } from "../services/authApi";
 import { rolesApi } from "../services/rolesApi";
-import {schoolsApi} from "../services/schoolsApi"
+import { schoolsApi } from "../services/schoolsApi";
 
 const rootReducer = combineReducers({
   auth: authSlice,
@@ -10,6 +10,5 @@ const rootReducer = combineReducers({
   [rolesApi.reducerPath]: rolesApi.reducer,
   [schoolsApi.reducerPath]: schoolsApi.reducer,
 });
-
 
 export default rootReducer;

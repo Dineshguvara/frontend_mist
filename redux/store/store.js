@@ -26,10 +26,8 @@ const store = configureStore({
       .concat(authApi.middleware) // Add RTK Query middleware
       .concat(rolesApi.middleware)
       .concat(schoolsApi.middleware)
-      .concat(logger) // Add logger
+      .concat(logger), // Add logger
 });
-
- 
 
 // store.subscribe(() => {
 //   console.log("Redux state after action:", store.getState());

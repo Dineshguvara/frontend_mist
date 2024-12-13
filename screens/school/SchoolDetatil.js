@@ -12,19 +12,26 @@ import {
 import { useGetSchoolByIdQuery } from "../../redux/services/schoolsApi";
 import { useDeleteSchoolHandler } from "./DeleteSchool";
 import InvitationModal from "../../component/auth/InvitationModal";
+import { useGetAllRolesQuery } from "../../redux/services/rolesApi";
+import resolveImageUrl from "../auth/helper/resolveImageUrl";
 
 const SchoolDetailScreen = ({ route, navigation }) => {
   const { schoolId } = route.params;
 
-  const roles = [
-    { id: "1", name: "Admin" },
-    { id: "2", name: "Principal" },
-    { id: "4", name: "Teacher" },
-    { id: "3", name: "Student" },
-  ];
+  // / Fetch school details using schoolId
+  const {
+    data: school,
+    isLoading: isSchoolLoading,
+    isError: isSchoolError,
+  } = useGetSchoolByIdQuery(schoolId);
 
-  // Fetch school details using schoolId
-  const { data: school, isLoading, isError } = useGetSchoolByIdQuery(schoolId);
+  // Fetch roles from the roles table
+  const {
+    data: roles,
+    isLoading: isRolesLoading,
+    isError: isRolesError,
+  } = useGetAllRolesQuery();
+
   const { handleDelete, isDeleting } = useDeleteSchoolHandler(navigation);
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -45,24 +52,24 @@ const SchoolDetailScreen = ({ route, navigation }) => {
     );
   };
 
-  const resolveImageUrl = (url) => {
-    if (!url) {
-      return "https://via.placeholder.com/300"; // Placeholder for missing images
-    }
+  // const resolveImageUrl = (url) => {
+  //   if (!url) {
+  //     return "https://via.placeholder.com/300"; // Placeholder for missing images
+  //   }
 
-    if (url.startsWith("http") || url.startsWith("https")) {
-      return url; // Full URL
-    }
+  //   if (url.startsWith("http") || url.startsWith("https")) {
+  //     return url; // Full URL
+  //   }
 
-    if (url.startsWith("/")) {
-      // Relative path, prepend with server IP
-      return `http://192.168.1.9:3000${url}`;
-    }
+  //   if (url.startsWith("/")) {
+  //     // Relative path, prepend with server IP
+  //     return `http://192.168.29.225:3000${url}`;
+  //   }
 
-    return url; // Fallback to whatever is provided
-  };
+  //   return url; // Fallback to whatever is provided
+  // };
 
-  if (isLoading) {
+  if (isSchoolLoading || isRolesLoading) {
     return (
       <View style={styles.loaderContainer}>
         <ActivityIndicator size="large" color="#6200ee" />
@@ -70,12 +77,21 @@ const SchoolDetailScreen = ({ route, navigation }) => {
       </View>
     );
   }
-
-  if (isError || !school) {
+  if (isSchoolError || !school) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>
           Failed to load school details. Please try again later.
+        </Text>
+      </View>
+    );
+  }
+
+  if (isRolesError || !roles) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>
+          Failed to load roles. Please try again later.
         </Text>
       </View>
     );
@@ -125,6 +141,7 @@ const SchoolDetailScreen = ({ route, navigation }) => {
           disabled={isDeleting}
         />
         <View style={styles.buttonSpacing} />
+        {/* INVITE BUTTON */}
         <Button title="Invite" onPress={() => setModalVisible(true)} />
       </View>
       <InvitationModal

@@ -1,18 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { TokenService } from "../../utils/token";
-import { BASE_URL } from "../../utils/config";
+import enhancedBaseQuery from "./helper/enhanceBaseQuery";
+
 export const schoolsApi = createApi({
   reducerPath: "schoolApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
-    prepareHeaders: async (headers) => {
-      const token = await TokenService.getAccessToken();
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: enhancedBaseQuery,
   tagTypes: ["School"],
   endpoints: (builder) => ({
     createSchool: builder.mutation({
@@ -30,8 +21,17 @@ export const schoolsApi = createApi({
       query: () => "/school",
       providesTags: ["School"],
     }),
+    showAllSchools: builder.query({
+      query: () => "/school/school-register",
+      providesTags: ["School"],
+      // extraOptions: { skipAuth: true },
+    }),
     getSchoolById: builder.query({
       query: (id) => `/school/${id}`,
+      providesTags: (result, error, id) => [{ type: "School", id }],
+    }),
+    showSchoolById: builder.query({
+      query: (id) => `/school/school-register/${id}`,
       providesTags: (result, error, id) => [{ type: "School", id }],
     }),
     updateSchool: builder.mutation({
@@ -58,7 +58,9 @@ export const schoolsApi = createApi({
 export const {
   useCreateSchoolMutation,
   useGetAllSchoolsQuery,
+  useShowAllSchoolsQuery,
   useGetSchoolByIdQuery,
+  useShowSchoolByIdQuery,
   useUpdateSchoolMutation,
   useDeleteSchoolMutation,
 } = schoolsApi;

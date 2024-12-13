@@ -24,7 +24,7 @@ const EditSchoolScreen = ({ route, navigation }) => {
     }
 
     if (url.startsWith("/")) {
-      return `http://192.168.1.9:3000${url}`; // Adjust base URL to match your backend
+      return `http://192.168.63.86:3000${url}`; // Adjust base URL to match your backend
     }
 
     return url;

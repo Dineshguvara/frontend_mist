@@ -4,7 +4,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 const SchoolCard = ({ school, onPress }) => {
   // Replace localhost with your local IP address if needed
   const imageUrl = school.imageUrl
-    ? school.imageUrl.replace("localhost", "192.168.1.9")
+    ? school.imageUrl.replace("localhost", "192.168.29.225")
     : "https://via.placeholder.com/150";
 
   return (

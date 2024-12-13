@@ -11,6 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useLoginMutation } from "../../redux/services/authApi";
+import { useDispatch } from "react-redux";
 
 const LoginScreen = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -18,6 +19,7 @@ const LoginScreen = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const navigation = useNavigation();
   const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -38,7 +40,8 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     try {
-      await login(formData).unwrap();
+      const response = await login(formData).unwrap();
+      console.log("Login successful and tokens stored");
     } catch (error) {
       setErrorMessage(error.data?.message || "Login error. Please try again.");
       console.error("Login error:", error);
@@ -81,6 +84,8 @@ const LoginScreen = () => {
         disabled={isLoading}
       />
       {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+      {/* Navigate to SchoolSelectScreen */}
+
       <TouchableOpacity
         onPress={() => navigation.navigate("Register")}
         style={styles.link}

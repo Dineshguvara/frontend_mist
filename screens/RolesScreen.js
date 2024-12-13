@@ -80,7 +80,7 @@ function RolesScreen() {
             try {
               await deleteRole(id);
               refetch();
-              // Alert.alert("Success", "Role deleted successfully");
+              // Alert.alert("Success", "Role deleted successfully");  
             } catch (error) {
               console.error("Error deleting role:", error);
               Alert.alert("Error", "Failed to delete the role");

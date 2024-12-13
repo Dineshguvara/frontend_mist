@@ -1,87 +1,164 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwtDecode from "jwt-decode";
-import { setAuthenticated, logout } from "../redux/reducers/authReducer";
-
-const ACCESS_TOKEN_KEY = "accessToken";
-const REFRESH_TOKEN_KEY = "refreshToken";
+import {
+  setAuthenticated,
+  logout,
+  loginSuccess,
+} from "../redux/reducers/authReducer";
 
 export const TokenService = {
-  // Store tokens
-  async storeTokens(accessToken, refreshToken, dispatch) {
-    try {
-      await AsyncStorage.multiSet([
-        [ACCESS_TOKEN_KEY, accessToken],
-        [REFRESH_TOKEN_KEY, refreshToken],
-      ]);
-      // console.log("Tokens stored successfully");
+  // Helper to generate keys based on userId
+  generateKey(key, userId) {
+    return `${key}_${userId}`;
+  },
 
+  // Store tokens
+  async handleTokenStorage(userId, accessToken, refreshToken, dispatch = null) {
+    if (!userId || !accessToken || !refreshToken) {
+      throw new Error("Missing parameters for token storage.");
+    }
+
+    try {
+      const accessKey = this.generateKey("accessToken", userId);
+      const refreshKey = this.generateKey("refreshToken", userId);
+
+      await AsyncStorage.multiSet([
+        [accessKey, accessToken],
+        [refreshKey, refreshToken],
+      ]);
+      console.log("Tokens stored successfully for userId:", userId);
+
+      // Dispatch actions if dispatch is provided
       if (dispatch) {
-        dispatch(setAuthenticated(true)); // Make sure you pass dispatch here
+        dispatch(loginSuccess({ user: { id: userId }, token: accessToken }));
       }
     } catch (error) {
-      console.error("Failed to store tokens:", error);
+      console.error("Error storing tokens:", error);
+      throw error; // Re-throw for upstream handling
     }
   },
 
-  // Retrieve tokens
-  async getToken(key) {
+  // Retrieve token by key and userId
+  async getToken(key, userId) {
     try {
-      const token = await AsyncStorage.getItem(key);
+      const tokenKey = this.generateKey(key, userId);
+      const token = await AsyncStorage.getItem(tokenKey);
+      console.log(`Retrieved token for key (${tokenKey}):`, token);
       return token || null;
     } catch (error) {
-      console.error(`Failed to retrieve token (${key}):`, error);
+      console.error(
+        `Failed to retrieve token (${key}) for userId (${userId}):`,
+        error
+      );
       return null;
     }
   },
 
-  // Retrieve access token
-  async getAccessToken() {
-    return this.getToken(ACCESS_TOKEN_KEY);
+  // Retrieve access token for userId
+  async getAccessToken(userId) {
+    return this.getToken("accessToken", userId);
   },
 
-  // Retrieve refresh token
-  async getRefreshToken() {
-    return this.getToken(REFRESH_TOKEN_KEY);
+  // Retrieve refresh token for userId
+  async getRefreshToken(userId) {
+    return this.getToken("refreshToken", userId);
   },
 
-  // Verify access token validity
-  async isAccessTokenValid() {
+  // Centralized token validation logic
+  async isTokenValid(token) {
     try {
-      const token = await this.getAccessToken();
       if (!token) {
-        console.error("Access token is missing or undefined");
+        console.error("Token is missing or undefined");
         return false;
       }
 
       const decoded = jwtDecode(token);
+      console.log("Decoded token:", decoded);
+
       const currentTime = Math.floor(Date.now() / 1000);
+      console.log(
+        "Token expiry time:",
+        decoded.exp,
+        "Current time:",
+        currentTime
+      );
 
       if (decoded.exp && decoded.exp > currentTime) {
         return true;
       } else {
-        console.error("Access token has expired");
+        console.error("Token has expired");
         return false;
       }
     } catch (error) {
-      console.error("Error verifying access token:", error);
+      console.error("Error validating token:", error);
       return false;
     }
   },
 
-  // Clear tokens
-  async clearTokens(dispatch) {
-    try {
-      await AsyncStorage.multiRemove([ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY]);
-      // console.log("Tokens cleared successfully");
+  // Verify access token validity for userId
+  async isAccessTokenValid(userId) {
+    const token = await this.getAccessToken(userId);
+    return this.isTokenValid(token);
+  },
 
-      // Update Redux state through dispatch
+  // Verify refresh token validity for userId
+  async isRefreshTokenValid(userId) {
+    const token = await this.getRefreshToken(userId);
+    return this.isTokenValid(token);
+  },
+
+  // Clear tokens for a specific userId
+  // async clearTokens(userId, dispatch) {
+  //   try {
+  //     const accessKey = this.generateKey("accessToken", userId);
+  //     const refreshKey = this.generateKey("refreshToken", userId);
+
+  //     await AsyncStorage.multiRemove([accessKey, refreshKey]);
+  //     console.log("Tokens cleared successfully for userId:", userId);
+
+  //     // Update Redux state through dispatch
+  //     if (dispatch) {
+  //       dispatch(logout());
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to clear tokens for userId:", userId, error);
+  //   }
+  // },
+
+  async clearTokens(userId, dispatch = null) {
+    if (!userId) {
+      console.error("Invalid userId passed to clearTokens");
+      return;
+    }
+
+    try {
+      const accessKey = this.generateKey("accessToken", userId);
+      const refreshKey = this.generateKey("refreshToken", userId);
+
+      await AsyncStorage.multiRemove([accessKey, refreshKey]);
+      console.log("Tokens cleared successfully for userId:", userId);
+
       if (dispatch) {
         dispatch(logout());
       }
     } catch (error) {
-      console.error("Failed to clear tokens:", error);
+      console.error("Failed to clear tokens for userId:", error);
     }
   },
+
+  // // Clear all tokens for all users (optional utility)
+  // async (dispatch) {
+  //   try {
+  //     await AsyncStorage.clear();
+  //     console.log("All tokens cleared successfully");
+
+  //     if (dispatch) {
+  //       dispatch(logout());
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to clear all tokens:", error);
+  //   }
+  // },
 };
 
 //              USAGE OF TOKEN IN APP
