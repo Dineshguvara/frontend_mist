@@ -1,5 +1,8 @@
 import { TokenService } from "../../../utils/token";
-import { setAuthenticated, logout } from "../../reducers/authReducer";
+import {
+  logoutSuccess,
+  setAuthenticated,
+} from "../../reducers/authenticationReducer";
 import authBaseQuery from "./authBaseQuery"; // Use authBaseQuery for token refresh
 
 export const initializeAuth = async (store, userId) => {
@@ -45,12 +48,12 @@ export const initializeAuth = async (store, userId) => {
       } else {
         console.error("Token refresh failed. Logging out.");
         await TokenService.clearTokens(userId);
-        store.dispatch(logout());
+        store.dispatch(logoutSuccess());
       }
     }
   } catch (error) {
     console.error("Error during auth initialization:", error.message || error);
     await TokenService.clearTokens(userId);
-    store.dispatch(logout());
+    store.dispatch(logoutSuccess());
   }
 };

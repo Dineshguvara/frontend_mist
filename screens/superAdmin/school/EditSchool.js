@@ -4,8 +4,9 @@ import React, { useEffect } from "react";
 import {
   useGetSchoolByIdQuery,
   useUpdateSchoolMutation,
-} from "../../redux/services/schoolsApi";
+} from "../../../redux/services/schoolsApi";
 import SchoolForm from "./SchoolForm";
+import resolveImageUrl from "../../auth/helperScreens/image/resolveImageUrl";
 
 const EditSchoolScreen = ({ route, navigation }) => {
   const { schoolId } = route.params;
@@ -14,21 +15,7 @@ const EditSchoolScreen = ({ route, navigation }) => {
   const { data: school, isLoading } = useGetSchoolByIdQuery(schoolId);
   const [updateSchool] = useUpdateSchoolMutation();
 
-  const resolveImageUrl = (url) => {
-    if (!url) {
-      return "https://via.placeholder.com/300"; // Placeholder for missing images
-    }
-
-    if (url.startsWith("http") || url.startsWith("https")) {
-      return url; // Full URL
-    }
-
-    if (url.startsWith("/")) {
-      return `http://192.168.63.86:3000${url}`; // Adjust base URL to match your backend
-    }
-
-    return url;
-  };
+ 
 
   useEffect(() => {
     if (!isLoading && !school) {

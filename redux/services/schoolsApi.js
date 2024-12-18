@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import enhancedBaseQuery from "./helper/enhanceBaseQuery";
+import enhancedBaseQuery from "./helper_services/enhanceBaseQuery";
 
 export const schoolsApi = createApi({
   reducerPath: "schoolApi",
@@ -11,9 +11,6 @@ export const schoolsApi = createApi({
         url: "/school",
         method: "POST",
         body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data", // Important for FormData
-        },
       }),
       invalidatesTags: ["School"],
     }),
@@ -39,15 +36,15 @@ export const schoolsApi = createApi({
         url: `/school/${id}`,
         method: "PATCH",
         body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
       }),
       invalidatesTags: (result, error, { id }) => [{ type: "School", id }],
     }),
     deleteSchool: builder.mutation({
       query: (id) => ({
-        url: `school/${id}`,
+        url: `/school/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, id) => [{ type: "School", id }],

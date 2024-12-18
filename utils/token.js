@@ -1,10 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwtDecode from "jwt-decode";
 import {
-  setAuthenticated,
-  logout,
+  logoutSuccess,
   loginSuccess,
-} from "../redux/reducers/authReducer";
+} from "../redux/reducers/authenticationReducer";
 
 export const TokenService = {
   // Helper to generate keys based on userId
@@ -30,7 +29,7 @@ export const TokenService = {
 
       // Dispatch actions if dispatch is provided
       if (dispatch) {
-        dispatch(loginSuccess({ user: { id: userId }, token: accessToken }));
+        dispatch(loginSuccess({ token: accessToken }));
       }
     } catch (error) {
       console.error("Error storing tokens:", error);
@@ -118,7 +117,7 @@ export const TokenService = {
 
   //     // Update Redux state through dispatch
   //     if (dispatch) {
-  //       dispatch(logout());
+  //       dispatch(logoutSuccess());
   //     }
   //   } catch (error) {
   //     console.error("Failed to clear tokens for userId:", userId, error);
@@ -139,7 +138,7 @@ export const TokenService = {
       console.log("Tokens cleared successfully for userId:", userId);
 
       if (dispatch) {
-        dispatch(logout());
+        dispatch(logoutSuccess());
       }
     } catch (error) {
       console.error("Failed to clear tokens for userId:", error);

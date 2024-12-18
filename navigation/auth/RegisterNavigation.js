@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Linking } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import SchoolSelectScreen from "../../screens/auth/helper/SchoolSelectScreen";
+import SchoolSelectScreen from "../../screens/auth/helperScreens/registration/SchoolSelectScreen";
 import RegisterFormScreen from "../../screens/auth/RegisterScreen";
 import LoadingScreen from "../../screens/LoadingScreen";
-import OtpVerifyScreen from "../../screens/auth/helper/OtpVerifyScreen";
+ 
 
 const Stack = createStackNavigator();
 
@@ -56,11 +56,7 @@ function RegisterNavigator() {
         options={{ headerShown: false }}
         initialParams={{ tokenData }}
       />
-      <Stack.Screen
-        name="otpVerifyScreen"
-        component={OtpVerifyScreen}
-        options={{ headerShown: false }}
-      />
+
     </Stack.Navigator>
   );
 }

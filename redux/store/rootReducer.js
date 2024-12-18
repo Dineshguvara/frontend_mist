@@ -1,12 +1,16 @@
 import { combineReducers } from "redux";
- import authSlice from "../reducers/authReducer"
-import { authApi } from "../services/authApi";
+import authenticationSlice from "../reducers/authenticationReducer";
+import { authApi } from "../services/auth_service/authApi";
 import { rolesApi } from "../services/rolesApi";
+import { dummyApi } from "../services/dummyApi";
 import { schoolsApi } from "../services/schoolsApi";
+import { forgetPasswordApi } from "../services/auth_service/forgetPasswordApi";
 
 const rootReducer = combineReducers({
-  auth: authSlice,
+  authentication: authenticationSlice,
   [authApi.reducerPath]: authApi.reducer, // Add RTK Query reducer
+  [forgetPasswordApi.reducerPath]: forgetPasswordApi.reducer,
+  [dummyApi.reducerPath]: dummyApi.reducer,
   [rolesApi.reducerPath]: rolesApi.reducer,
   [schoolsApi.reducerPath]: schoolsApi.reducer,
 });

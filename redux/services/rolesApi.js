@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import enhancedBaseQuery from "./helper/enhanceBaseQuery";
+import enhancedBaseQuery from "./helper_services/enhanceBaseQuery";
 export const rolesApi = createApi({
   reducerPath: "rolesApi",
   baseQuery: enhancedBaseQuery,

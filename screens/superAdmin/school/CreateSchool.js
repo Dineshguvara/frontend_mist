@@ -1,5 +1,5 @@
 import React from "react";
-import { useCreateSchoolMutation } from "../../redux/services/schoolsApi";
+import { useCreateSchoolMutation } from "../../../redux/services/schoolsApi";
 import SchoolForm from "./SchoolForm";
 
 const CreateSchoolScreen = ({ navigation }) => {

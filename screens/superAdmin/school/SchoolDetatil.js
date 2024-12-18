@@ -9,11 +9,11 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { useGetSchoolByIdQuery } from "../../redux/services/schoolsApi";
+import { useGetSchoolByIdQuery } from "../../../redux/services/schoolsApi";
 import { useDeleteSchoolHandler } from "./DeleteSchool";
-import InvitationModal from "../../component/auth/InvitationModal";
-import { useGetAllRolesQuery } from "../../redux/services/rolesApi";
-import resolveImageUrl from "../auth/helper/resolveImageUrl";
+import InvitationModal from "../../../component/auth/InvitationModal";
+import { useGetAllRolesQuery } from "../../../redux/services/rolesApi";
+import resolveImageUrl from "../../auth/helperScreens/image/resolveImageUrl";
 
 const SchoolDetailScreen = ({ route, navigation }) => {
   const { schoolId } = route.params;

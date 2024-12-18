@@ -13,13 +13,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useRegisterMutation } from "../../redux/services/authApi";
-import resolveImageUrl from "./helper/resolveImageUrl";
+import { useRegisterMutation } from "../../redux/services/auth_service/authApi";
+import resolveImageUrl from "./helperScreens/image/resolveImageUrl";
 import { useShowRoleByIdQuery } from "../../redux/services/rolesApi";
 import { useShowSchoolByIdQuery } from "../../redux/services/schoolsApi";
 import jwtDecode from "jwt-decode";
 import { Ionicons } from "@expo/vector-icons";
-// import { useStartRegistrationMutation } from "../../redux/services/authApi";
+// import { useGenerateRegistrationOtpMutation } from "../../redux/services/auth_service/authApi";
 
 const RegistrationFormScreen = () => {
   const route = useRoute();
@@ -67,21 +67,7 @@ const RegistrationFormScreen = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const validateForm = () => {
-    const { name, email, password, confirmPassword } = formData;
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert("Error", "All fields are required.");
-      return false;
-    }
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match.");
-      return false;
-    }
-    return true;
-  };
-
   const handleSubmit = async () => {
-    if (!validateForm()) return;
     try {
       await register({
         name: formData.name,
@@ -108,8 +94,6 @@ const RegistrationFormScreen = () => {
   };
 
   // const handleSubmit = async () => {
-  //   if (!validateForm()) return;
-
   //   try {
   //     const payload = {
   //       name: formData.name,
@@ -123,13 +107,14 @@ const RegistrationFormScreen = () => {
 
   //     await register(payload).unwrap(); // API to send OTp
 
-  //     navigation.navigate("otpVerifyScreen", {
+  //     navigation.navigate("VerifyOtp", {
   //       email: formData.email,
   //       formData: {
   //         ...formData,
   //         schoolId: Number(schoolId),
   //         roleId: Number(roleId),
   //       },
+  //       purpose: "REGISTRATION",
   //     });
   //   } catch (error) {
   //     console.error("Registration error:", error); // Debug the error object

@@ -2,7 +2,7 @@ import React from "react";
 import Button from "../Button";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import { useLogoutMutation } from "../../redux/services/authApi";
+import { useLogoutMutation } from "../../redux/services/auth_service/authApi";
 import { TokenService } from "../../utils/token";
 import store from "../../redux/store/store";
 
@@ -17,8 +17,9 @@ const LogoutButton = () => {
       const result = await logoutApi().unwrap();
       console.log("API Logout successful:", result);
 
+  
       // Retrieve userId from Redux state
-      const userId = store.getState().auth?.user?.id;
+      const userId = store.getState().authentication?.userId;
 
       if (userId) {
         // Clear tokens and update state

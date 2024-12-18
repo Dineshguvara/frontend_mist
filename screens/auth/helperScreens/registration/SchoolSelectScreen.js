@@ -9,8 +9,8 @@ import {
   StyleSheet,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useShowAllSchoolsQuery } from "../../../redux/services/schoolsApi";
-import SchoolCard from "../../school/SchoolCard";
+import { useShowAllSchoolsQuery } from "../../../../redux/services/schoolsApi";
+import SchoolCard from "../../../superAdmin/school/SchoolCard";
 
 const SchoolSelectScreen = () => {
   const { data: schools, isLoading, error } = useShowAllSchoolsQuery();
@@ -25,7 +25,7 @@ const SchoolSelectScreen = () => {
   const handleSelectSchool = (school) => {
     navigation.navigate("RegisterForm", {
       schoolId: school.id,
-      roleId: 15, // Default roleId for Student
+      roleId: 3, // Default roleId for Student
     });
   };
 

@@ -5,13 +5,18 @@ import { BASE_URL } from "../../../utils/config";
 const UNAUTHENTICATED_ENDPOINTS = [
   "login",
   "register",
-  "startRegistration",
-  "completeRegistration",
-  "resendOtp",
   "refreshToken",
+  "generateRegistrationOtp",
+  "verifyRegistrationOtp",
+  "resendRegistrationOtp",
+  "generateForgetPasswordOtp",
+  "verifyForgetPasswordOtp",
+  "resendForgetPasswordOtp",
+  "updateForgetPassword",
   "showAllSchools",
   "showSchoolById",
   "showRoleById",
+  "uploadFile",
 ];
 
 const authBaseQuery = fetchBaseQuery({
@@ -25,7 +30,7 @@ const authBaseQuery = fetchBaseQuery({
     }
 
     const state = getState();
-    const userId = state.auth?.user?.id;
+    const userId = state.authentication?.userId;
 
     if (!userId) {
       console.error(

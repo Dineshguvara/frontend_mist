@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { useDeleteSchoolMutation } from "../../redux/services/schoolsApi";
+import { useDeleteSchoolMutation } from "../../../redux/services/schoolsApi";
 
 export const useDeleteSchoolHandler = (navigation) => {
   const [deleteSchool, { isLoading: isDeleting }] = useDeleteSchoolMutation();

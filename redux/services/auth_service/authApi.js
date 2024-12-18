@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { TokenService } from "../../utils/token";
-import enhancedBaseQuery from "./helper/enhanceBaseQuery";
+import { TokenService } from "../../../utils/token";
+import enhancedBaseQuery from "../helper_services/enhanceBaseQuery";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -17,9 +17,6 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           const { userId, accessToken, refreshToken } = data;
-          console.log(data);
-          console.log(userId);
-          console.log(accessToken, refreshToken);
 
           await TokenService.handleTokenStorage(
             userId,
@@ -38,6 +35,7 @@ export const authApi = createApi({
         method: "POST",
         body: userData,
       }),
+
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -58,19 +56,19 @@ export const authApi = createApi({
       },
     }),
 
-    // startRegistration: builder.mutation({
+    // generateRegistrationOtp: builder.mutation({
     //   query: (userDto) => ({
-    //     url: "/authentication/register/start",
+    //     url: "/authentication/register/start/generate_otp",
     //     method: "POST",
     //     body: userDto, // Send the user details to start the registration process
     //   }),
     // }),
 
-    // completeRegistration: builder.mutation({
+    // verifyRegistrationOtp: builder.mutation({
     //   query: ({ email, otp, userDto }) => ({
-    //     url: "/authentication/register/complete",
+    //     url: "/authentication/register/finish/verify_otp",
     //     method: "POST",
-    //     body: { email, otp, userDto }, // Verify OTP and complete the registration
+    //     body: { email, otp, userDto },
     //   }),
     //   async onQueryStarted(args, { dispatch, queryFulfilled }) {
     //     try {
@@ -92,20 +90,13 @@ export const authApi = createApi({
     //   },
     // }),
 
-    // resendOtp: builder.mutation({
-    //   query: (email) => ({
-    //     url: "/authentication/register/resend-otp",
+    // resendRegistrationOtp: builder.mutation({
+    //   query: (dto) => ({
+    //     url: "/authentication/register/resend_otp",
     //     method: "POST",
-    //     body: { email }, // Resend OTP to the provided email
+    //     body: dto,
     //   }),
     // }),
-
-    logout: builder.mutation({
-      query: () => ({
-        url: "/authentication/logout",
-        method: "POST",
-      }),
-    }),
 
     inviteUser: builder.mutation({
       query: (invitationData) => ({
@@ -114,15 +105,24 @@ export const authApi = createApi({
         body: invitationData,
       }),
     }),
+
+    logout: builder.mutation({
+      query: () => ({
+        url: "/authentication/logout",
+        method: "POST",
+      }),
+    }),
   }),
 });
 
 export const {
   useLoginMutation,
-  useRegisterMutation,
-  // useStartRegistrationMutation,
-  // useCompleteRegistrationMutation,
-  // useResendOtpMutation,
-  useLogoutMutation,
+
+  useRegisterMutation,   
+  // useGenerateRegistrationOtpMutation,
+  // useVerifyRegistrationOtpMutation,
+  // useResendRegistrationOtpMutation,
+
   useInviteUserMutation,
+  useLogoutMutation,
 } = authApi;

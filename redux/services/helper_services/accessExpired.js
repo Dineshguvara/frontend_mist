@@ -8,7 +8,9 @@ export const handleTokenRefresh = async (
 ) => {
   const dispatch = api.dispatch;
   try {
-    const userId = api.getState().auth?.user?.id;
+    
+    const userId = api.getState().authentication?.userId;
+    
     if (!userId) {
       console.error("User ID is not available in the Redux state inside handle refresh token");
       await TokenService.clearTokens(userId, dispatch); // Clear tokens and logout

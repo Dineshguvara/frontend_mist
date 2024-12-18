@@ -1,8 +1,8 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import CreateSchoolScreen from "../../screens/school/CreateSchool";
-import EditSchoolScreen from "../../screens/school/EditSchool";
-import SchoolDetailScreen from "../../screens/school/SchoolDetatil";
+import CreateSchoolScreen from "../../screens/superAdmin/school/CreateSchool";
+import EditSchoolScreen from "../../screens/superAdmin/school/EditSchool";
+import SchoolDetailScreen from "../../screens/superAdmin/school/SchoolDetatil";
 
 const SchoolStackNavigator = createStackNavigator();
 

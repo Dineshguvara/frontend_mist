@@ -10,7 +10,7 @@ import {
   TextInput,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { useInviteUserMutation } from "../../redux/services/authApi";
+import { useInviteUserMutation } from "../../redux/services/auth_service/authApi";
 
 const InvitationModal = ({ isVisible, onClose, onSave, roles, schoolId }) => {
   const [formData, setFormData] = useState({
